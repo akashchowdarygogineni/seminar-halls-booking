@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seminar Hall Booking System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>College Seminar Hall Booking System</h1>
+            <p>Select your login type to access the system</p>
+        </header>
+        
+        <div class="login-options">
+            <div class="login-card">
+                <div class="icon">👨‍💼</div>
+                <h2>Admin Portal</h2>
+                <p>Manage faculty accounts and approve/reject booking requests</p>
+                <a href="/admin-login" class="btn btn-primary">Admin Login</a>
+            </div>
+            
+            <div class="login-card">
+                <div class="icon">👨‍🏫</div>
+                <h2>Faculty Portal</h2>
+                <p>Book seminar halls and track your booking status</p>
+                <a href="/faculty-login" class="btn btn-secondary">Faculty Login</a>
+            </div>
+        </div>
+        
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+    </div>
+</body>
+</html>

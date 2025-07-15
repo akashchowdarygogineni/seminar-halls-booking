@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Seminar Hall Booking</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <div class="user-info">
+                <span>Welcome, <%= user.email %></span>
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-logout">Logout</button>
+                </form>
+            </div>
+        </header>
+        
+        <div class="dashboard-content">
+            <div class="section">
+                <h2>Create Faculty Account</h2>
+                <form action="/create-faculty" method="POST" class="faculty-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department:</label>
+                            <input type="text" id="department" name="department" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Faculty Account</button>
+                </form>
+            </div>
+            
+            <div class="section">
+                <h2>Faculty Members</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% faculty.forEach(member => { %>
+                            <tr>
+                                <td><%= member.name %></td>
+                                <td><%= member.email %></td>
+                                <td><%= member.department %></td>
+                                <td>
+                                    <form action="/delete-faculty/<%= member.id %>" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Booking Requests</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Faculty</th>
+                                <th>Department</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% bookings.forEach(booking => { %>
+                            <tr>
+                                <td><%= booking.facultyName %></td>
+                                <td><%= booking.department %></td>
+                                <td><%= booking.date %></td>
+                                <td><%= booking.time %></td>
+                                <td><%= booking.reason %></td>
+                                <td>
+                                    <span class="status status-<%= booking.status %>">
+                                        <%= booking.status.charAt(0).toUpperCase() + booking.status.slice(1) %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <% if (booking.status === 'pending') { %>
+                                    <div class="action-buttons">
+                                        <form action="/update-booking/<%= booking.id %>" method="POST" style="display: inline;">
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <button onclick="showRejectForm('<%= booking.id %>')" class="btn btn-danger btn-sm">Reject</button>
+                                    </div>
+                                    <% } else { %>
+                                    <span class="action-complete">Action Complete</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <h3>Reject Booking Request</h3>
+            <form id="rejectForm" method="POST">
+                <div class="form-group">
+                    <label for="adminReason">Reason for rejection:</label>
+                    <textarea id="adminReason" name="adminReason" rows="3" required></textarea>
+                </div>
+                <input type="hidden" name="status" value="rejected">
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-danger">Reject</button>
+                    <button type="button" onclick="closeRejectModal()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="/js/admin.js"></script>
+</body>
+</html>
