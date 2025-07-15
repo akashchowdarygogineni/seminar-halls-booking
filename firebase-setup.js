@@ -1,102 +1,13 @@
-// Firebase Admin SDK Setup Instructions
-// This file contains the instructions for setting up Firebase Admin SDK for your project
-
-/*
-FIREBASE ADMIN SDK SETUP:
-
-1. Go to https://console.firebase.google.com/
-2. Select your project or create a new one
-
-3. Enable Firestore Database:
-   - Go to Firestore Database
-   - Create database in test mode (you can modify rules later)
-
-4. Generate Service Account Key:
-   - Go to Project Settings > Service accounts
-   - Click "Generate new private key"
-   - Download the JSON file and rename it to "serviceAccountKey.json"
-   - Place it in your project root directory
-
-5. Enable Authentication (optional for user management):
-   - Go to Authentication > Sign-in method
-   - Enable Email/Password authentication
-
-6. Create initial admin user in Firestore:
-   - Go to Firestore Database
-   - Create a new collection called "users"
-   - Add a document with these fields:
-     {
-       uid: "admin-uid-123",
-       email: "admin@college.edu",
-       name: "System Administrator",
-       role: "admin",
-       password: "admin123", // Change this in production
-       createdAt: [current timestamp]
-     }
-
-7. Database Collections Structure:
-
-   USERS COLLECTION:
-   {
-     uid: "unique-user-id",
-     email: "user@example.com",
-     name: "User Name",
-     department: "Computer Science", // for faculty only
-     role: "admin" | "faculty",
-     password: "hashed-password", // In production, use proper hashing
-     createdAt: timestamp
-   }
-
-   BOOKINGS COLLECTION:
-   {
-     facultyEmail: "faculty@example.com",
-     facultyName: "Faculty Name",
-     department: "Computer Science",
-     date: "2024-01-15",
-     time: "14:00",
-     reason: "Workshop on AI",
-     status: "pending" | "approved" | "rejected",
-     adminReason: "Reason for rejection (optional)",
-     createdAt: timestamp,
-     updatedAt: timestamp
-   }
-
-8. Security Rules for Firestore:
-   Go to Firestore Database > Rules and use:
-   
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /{document=**} {
-         allow read, write: if request.auth != null;
-       }
-     }
-   }
-
-9. IMPORTANT SECURITY NOTES:
-   - Keep your serviceAccountKey.json file secure and never commit it to version control
-   - Add serviceAccountKey.json to your .gitignore file
-   - In production, use environment variables for sensitive data
-   - Implement proper password hashing (bcrypt) instead of plain text passwords
-   - Use proper input validation and sanitization
-
-10. Default Login Credentials (after setup):
-    Admin: admin@college.edu / admin123
-    (Create faculty accounts through admin dashboard)
-*/
-
-// Example of how the serviceAccountKey.json should look:
-/*
 {
   "type": "service_account",
-  "project_id": "your-project-id",
-  "private_key_id": "key-id",
-  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com",
-  "client_id": "client-id",
+  "project_id": "seminar-hall-booking-9a9ef",
+  "private_key_id": "f62a5a66568e6e1a540d289622a51cf8cce7991a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCuyEQra0rJWoLF\n2jJwKqBZmw4OjtkpmndLzwOXI/SyJY0Lhxwbqc71Ai+I99lGi7z2xv9mMcztVC73\ndQEfATS/FVHFT6UhGgQdhPD2fXtfmitzF7QEhZ4PZd8w8bayVOEuB4+M0ZPCqxK+\ncdloPCp2sE5znMlRL5EwCPBKFmxl8/hBsKrYAGkpsdQP7fjvTnxhiV1Z5rk7LmHW\nChT9jE18e05Oa/H5UjUkEM03DgRA6rUZ6EUe4dot99DjMpjI8yhuLRBydooFvxkr\nykML/1bX4zDrOBVP6ub3AqwfgjWLGPU7F3x8rqggpVFTEjxP/fU1cj5D8SV+0d3e\n1vwM0eofAgMBAAECggEAPqqEMpMd9dKzZ4/jnK7T3jzHTfXuq8l7s10OWv7jyYnI\nJ9VyAQMhtlvpwjCnIPGSN2LDCJebc45G5qd3Vu/+QvK4Zke3m4Yx6omTQbVc6jqj\nEHlzrFliAgBTBT/s8sSXFgNU9zbfRSFEL68vNX249eQhxLb2wVqOMkxKJy4iAG1f\nhgLLV+zzt2KbfDn6TwxxtACu4wNvXXf6lsdaSkPl+Q8v98AU6rv6JZGZ7OqCCrwY\nAvnH4r0vWXiz78cyKi5rb+JLHnl+RLDgAurAMBi4Ysp24JfFB+Qfh9dqK3rIf26Z\n1kBW7JGCeOQWbtJ5gLlOrGvHgadmCMRsc91RslhGjQKBgQDvJOvj0dWTvWqfK0LZ\ndG2xYu8JKMHFIGy8A+8smkG0RzLE5CEfHX6CFpTjrCMJiXdktgptobFqiQ6235nr\nXEJYPh3EZgLEjRG1XLN7q7QqhRP8Nt7mkl4kPxjhhk1jz+C9d7UTaQrHRNhE4XaU\nrmHGrO7wiWlB4btpQ5pLgSr7ZQKBgQC7GgJCHGJNiiXp4Qp33RNNyA3PK4kVUuCL\ncRDjpx1h7xeNtsBT096VqHcIDwi7w5HEhxSr1VwfieQUgyw7QQz8uOatBSbJRvDr\nP+bKqDo3MkNMfLZslpw4ndqBgxL4LTixu1phDFuTIYKy+hO2MgiGpzWehQLiNjsI\nRWODMx2xMwKBgEfMMfYoHZNJnyVCe8OFrRlAtrttPR/N6FdaZwhhF7DkX121kCwj\nUsQDu5fPKoXGe84EyYS4sudlVsGYyEFdZZ3QqGc6qUIRiGuG9Wv/1QufAK0MXEel\nUhZXy0SKadm5o6O+uOKm+tFw3e1wM4XYBQr9CI+28Z8SAo5L+ZsJoLnxAoGBAJXz\nZlPtw6s5SOGEhotCFzKDXu3milsYrPWUjGCnkpjmsg3VpZaJex6egadnxSwWtUC4\nsgx1Vvu/25fE+TIUFICG//ky4770qCkicamB4gZStjUazmmA23tUp8acchuMwp9O\n9ERLTyk/9ivS2PFwb/zbDdIZ8BG0POOIGRURZn6ZAoGASMOoo/wt8rUpKWb+qN50\niyrLuxi1h/NkdaU7mWfLxjr6hmCBPBojqwrQv3u4Rk9ij5eq36yR+xPzjDEgbOB9\nk07MEkdoeRvTqswZqDC3LjdRyGSoYK46xCrySEi7IbF6yN12N0JbvemivUP95dRv\nWwB44P0CAYlnps1bE4den+8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@seminar-hall-booking-9a9ef.iam.gserviceaccount.com",
+  "client_id": "101341376645148781554",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://oauth2.googleapis.com/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xxxxx%40your-project.iam.gserviceaccount.com"
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40seminar-hall-booking-9a9ef.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
 }
-*/
