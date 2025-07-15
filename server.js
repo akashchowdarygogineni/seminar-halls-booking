@@ -8,11 +8,19 @@ const app = express();
 const port = 3000;
 
 // Firebase Admin SDK configuration
-const serviceAccount = require("./serviceAccountKey.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+try {
+  const serviceAccount = require("./serviceAccountKey.json");
+  
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    projectId: serviceAccount.project_id
+  });
+  
+  console.log('Firebase Admin initialized successfully');
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+  process.exit(1);
+}
 
 const db = admin.firestore();
 const auth = admin.auth();
