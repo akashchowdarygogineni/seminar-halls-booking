@@ -1,20 +1,23 @@
-# College Seminar Hall Booking System
+# Vishnu Institute of Technology - Seminar Hall Booking System
 
-A comprehensive web application for managing seminar hall bookings in a college environment. The system provides separate portals for administrators and faculty members.
+A comprehensive web application for managing seminar hall bookings at Vishnu Institute of Technology. The system provides separate portals for administrators and faculty members with complete hall management features.
 
 ## Features
 
 ### Admin Portal
 - **Authentication**: Secure login system for administrators
 - **Faculty Management**: Create and manage faculty accounts
+- **Hall Management**: Add, view, and delete seminar halls
 - **Booking Management**: Review, approve, or reject seminar hall booking requests
 - **Dashboard**: Overview of all bookings and faculty members
 
 ### Faculty Portal
 - **Authentication**: Secure login system for faculty members
-- **Booking System**: Request seminar hall bookings with date, time, and reason
+- **Hall Selection**: Choose from available seminar halls with capacity and location details
+- **Booking System**: Request seminar hall bookings with date, time, hall selection, and reason
 - **Status Tracking**: View booking history and approval status
 - **Real-time Updates**: Automatic status updates and notifications
+- **Conflict Prevention**: System prevents double booking of halls
 
 ## Technology Stack
 
@@ -36,9 +39,10 @@ A comprehensive web application for managing seminar hall bookings in a college 
    - Create a Firebase project at https://console.firebase.google.com/
    - Enable Authentication (Email/Password)
    - Enable Firestore Database
-   - Get your Firebase config and update `server.js`
+   - Download service account key as `serviceAccountKey.json`
    - Create an admin user in Firebase Authentication
    - Add admin user to Firestore users collection with role: "admin"
+   - Run initial setup: `node firebase-setup.js`
 
 4. Start the server:
    ```bash
@@ -68,6 +72,18 @@ A comprehensive web application for managing seminar hall bookings in a college 
 
 ## Database Structure
 
+### Halls Collection
+```javascript
+{
+  name: "Seminar Hall 1",
+  capacity: 150,
+  location: "Ground Floor, Academic Block A",
+  facilities: "Projector, AC, Sound System, Podium",
+  isActive: true,
+  createdAt: timestamp
+}
+```
+
 ### Users Collection
 ```javascript
 {
@@ -86,6 +102,9 @@ A comprehensive web application for managing seminar hall bookings in a college 
   facultyEmail: "faculty@example.com",
   facultyName: "Faculty Name",
   department: "Computer Science",
+  hallId: "hall-document-id",
+  hallName: "Seminar Hall 1",
+  hallCapacity: 150,
   date: "2024-01-15",
   time: "14:00",
   reason: "Workshop on AI",

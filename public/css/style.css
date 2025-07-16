@@ -29,6 +29,13 @@ body {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
+.header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    opacity: 0.95;
+}
+
 .header p {
     font-size: 1.2rem;
     opacity: 0.9;
@@ -322,6 +329,16 @@ table tr:hover {
     color: #6b7280;
     font-style: italic;
     padding: 30px;
+}
+
+.no-halls {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 30px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 2px dashed #d1d5db;
 }
 
 .modal {

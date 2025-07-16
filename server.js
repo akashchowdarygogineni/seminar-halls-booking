@@ -140,6 +140,11 @@ app.post('/faculty-login', async (req, res) => {
 // Admin dashboard
 app.get('/admin-dashboard', requireAdmin, async (req, res) => {
   try {
+    // Get all halls
+    const hallsRef = db.collection('halls');
+    const hallsSnapshot = await hallsRef.orderBy('name').get();
+    const halls = hallsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
     const bookingsRef = db.collection('bookings');
     const bookingsSnapshot = await bookingsRef.orderBy('createdAt', 'desc').get();
     const bookings = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -148,16 +153,21 @@ app.get('/admin-dashboard', requireAdmin, async (req, res) => {
     const facultySnapshot = await facultyRef.where('role', '==', 'faculty').get();
     const faculty = facultySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    res.render('admin-dashboard', { bookings, faculty, user: req.session.user });
+    res.render('admin-dashboard', { bookings, faculty, halls, user: req.session.user });
   } catch (error) {
     console.error('Admin dashboard error:', error);
-    res.render('admin-dashboard', { bookings: [], faculty: [], user: req.session.user, error: error.message });
+    res.render('admin-dashboard', { bookings: [], faculty: [], halls: [], user: req.session.user, error: error.message });
   }
 });
 
 // Faculty dashboard
 app.get('/faculty-dashboard', requireAuth, async (req, res) => {
   try {
+    // Get all halls
+    const hallsRef = db.collection('halls');
+    const hallsSnapshot = await hallsRef.orderBy('name').get();
+    const halls = hallsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
     const bookingsRef = db.collection('bookings');
     const bookingsSnapshot = await bookingsRef
       .where('facultyEmail', '==', req.session.user.email)
@@ -165,10 +175,10 @@ app.get('/faculty-dashboard', requireAuth, async (req, res) => {
       .get();
     const bookings = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    res.render('faculty-dashboard', { bookings, user: req.session.user });
+    res.render('faculty-dashboard', { bookings, halls, user: req.session.user });
   } catch (error) {
     console.error('Faculty dashboard error:', error);
-    res.render('faculty-dashboard', { bookings: [], user: req.session.user, error: error.message });
+    res.render('faculty-dashboard', { bookings: [], halls: [], user: req.session.user, error: error.message });
   }
 });
 
@@ -204,13 +214,36 @@ app.post('/create-faculty', requireAdmin, async (req, res) => {
 
 // Book seminar hall
 app.post('/book-hall', requireAuth, async (req, res) => {
-  const { date, time, reason } = req.body;
+  const { date, time, reason, hallId } = req.body;
   
   try {
+    // Get hall details
+    const hallDoc = await db.collection('halls').doc(hallId).get();
+    if (!hallDoc.exists) {
+      return res.redirect('/faculty-dashboard?error=' + encodeURIComponent('Selected hall not found'));
+    }
+    
+    const hallData = hallDoc.data();
+    
+    // Check if hall is already booked for the same date and time
+    const existingBooking = await db.collection('bookings')
+      .where('hallId', '==', hallId)
+      .where('date', '==', date)
+      .where('time', '==', time)
+      .where('status', '==', 'approved')
+      .get();
+    
+    if (!existingBooking.empty) {
+      return res.redirect('/faculty-dashboard?error=' + encodeURIComponent('Hall is already booked for this date and time'));
+    }
+    
     await db.collection('bookings').add({
       facultyEmail: req.session.user.email,
       facultyName: req.session.user.name,
       department: req.session.user.department,
+      hallId: hallId,
+      hallName: hallData.name,
+      hallCapacity: hallData.capacity,
       date: date,
       time: time,
       reason: reason,
@@ -265,6 +298,40 @@ app.post('/delete-faculty/:id', requireAdmin, async (req, res) => {
     res.redirect('/admin-dashboard');
   } catch (error) {
     console.error('Delete faculty error:', error);
+    res.redirect('/admin-dashboard?error=' + encodeURIComponent(error.message));
+  }
+});
+
+// Add seminar hall
+app.post('/add-hall', requireAdmin, async (req, res) => {
+  const { name, capacity, location, facilities } = req.body;
+  
+  try {
+    await db.collection('halls').add({
+      name: name,
+      capacity: parseInt(capacity),
+      location: location,
+      facilities: facilities,
+      isActive: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    
+    res.redirect('/admin-dashboard');
+  } catch (error) {
+    console.error('Add hall error:', error);
+    res.redirect('/admin-dashboard?error=' + encodeURIComponent(error.message));
+  }
+});
+
+// Delete seminar hall
+app.post('/delete-hall/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    await db.collection('halls').doc(id).delete();
+    res.redirect('/admin-dashboard');
+  } catch (error) {
+    console.error('Delete hall error:', error);
     res.redirect('/admin-dashboard?error=' + encodeURIComponent(error.message));
   }
 });
