@@ -4,6 +4,7 @@ const session = require('express-session');
 const path = require('path');
 const admin = require('firebase-admin');
 
+const { hashPassword, verifyPassword, validatePasswordStrength } = require('./utils/auth');
 const app = express();
 const port = 3000;
 
@@ -201,7 +202,7 @@ app.post('/create-faculty', requireAdmin, async (req, res) => {
       name: name,
       department: department,
       role: 'faculty',
-      password: password, // In production, hash this password
+      password: hashedPassword,
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
     
