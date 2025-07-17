@@ -84,8 +84,9 @@ app.post('/admin-login', async (req, res) => {
     
     const userData = snapshot.docs[0].data();
     
-    // Verify password (in production, use proper password hashing)
-    if (userData.password !== password) {
+    // Verify hashed password
+    const isValidPassword = await verifyPassword(password, userData.password);
+    if (!isValidPassword) {
       return res.render('admin-login', { error: 'Invalid email or password.' });
     }
     
@@ -118,8 +119,9 @@ app.post('/faculty-login', async (req, res) => {
     
     const userData = snapshot.docs[0].data();
     
-    // Verify password (in production, use proper password hashing)
-    if (userData.password !== password) {
+    // Verify hashed password
+    const isValidPassword = await verifyPassword(password, userData.password);
+    if (!isValidPassword) {
       return res.render('faculty-login', { error: 'Invalid email or password.' });
     }
     
