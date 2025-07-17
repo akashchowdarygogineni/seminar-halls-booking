@@ -84,9 +84,8 @@ app.post('/admin-login', async (req, res) => {
     
     const userData = snapshot.docs[0].data();
     
-    // Verify password using bcrypt
-    const isPasswordValid = await verifyPassword(password, userData.password);
-    if (!isPasswordValid) {
+    // Verify password (in production, use proper password hashing)
+    if (userData.password !== password) {
       return res.render('admin-login', { error: 'Invalid email or password.' });
     }
     
@@ -189,6 +188,15 @@ app.post('/create-faculty', requireAdmin, async (req, res) => {
   const { name, email, password, department } = req.body;
   
   try {
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
+      return res.redirect('/admin-dashboard?error=' + encodeURIComponent(passwordValidation.message));
+    }
+    
+    // Hash the password before storing
+    const hashedPassword = await hashPassword(password);
+    
     // Create user in Firebase Auth
     const userRecord = await auth.createUser({
       email: email,

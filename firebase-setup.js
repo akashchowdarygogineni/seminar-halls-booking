@@ -6,8 +6,7 @@ const bcrypt = require('bcrypt');
 async function setupInitialData() {
   try {
     // Hash passwords for security
-    const saltRounds = 12;
-    const adminPassword = await bcrypt.hash('admin123', saltRounds);
+    const adminPassword = await hashPassword('admin123');
     
     console.log('Setting up initial admin user...');
     
@@ -20,3 +19,5 @@ async function setupInitialData() {
       password: adminPassword,
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
+  }
+}

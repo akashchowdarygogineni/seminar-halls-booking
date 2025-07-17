@@ -399,6 +399,26 @@ table tr:hover {
     border-left: 4px solid #dc2626;
 }
 
+.password-feedback {
+    font-size: 0.875rem;
+    margin-top: 5px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.password-feedback.valid {
+    background: #d1fae5;
+    color: #059669;
+    border-left: 3px solid #059669;
+}
+
+.password-feedback.invalid {
+    background: #fee2e2;
+    color: #dc2626;
+    border-left: 3px solid #dc2626;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 10px;
