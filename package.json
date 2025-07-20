@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "College Seminar Hall Booking System with Admin and Faculty portals",
   "main": "server.js",
-  "type": "module",
+  
   "scripts": {
     "start": "node server.js"
   },
