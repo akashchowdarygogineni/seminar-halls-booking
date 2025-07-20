@@ -1,13 +1,25 @@
 const admin = require('firebase-admin');
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 
 
 // Initialize Firebase Admin SDK
-const serviceAccount = require('./serviceAccountKey.json');  // Make sure this file exists
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+  credential: admin.credential.cert({
+    type: process.env.TYPE,
+    project_id: process.env.PROJECT_ID,
+    private_key_id: process.env.PRIVATE_KEY_ID,
+    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.CLIENT_EMAIL,
+    client_id: process.env.CLIENT_ID,
+    auth_uri: process.env.AUTH_URI,
+    token_uri: process.env.TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
+    universe_domain: process.env.UNIVERSE_DOMAIN,
+  }),
+});;
 
 const db = admin.firestore();
 
@@ -25,8 +37,8 @@ async function setupInitialData() {
     console.log('Setting up initial admin user...');
 
     await db.collection('users').add({
-      uid: 'admin-vit-001',
-      email: 'admin@vit.edu',
+      uid: 'admin2',
+      email: 'admin2@vit.edu',
       name: 'VIT Administrator',
       role: 'admin',
       password: adminPassword,
